@@ -2,7 +2,9 @@ import React from 'react';
 import './App.css';
 
 function App() {
-    return (<></>);
+    return (<>
+        <h1>Howdy, Fellow Coaches!</h1>
+    </>);
 }
 
 export default App;
