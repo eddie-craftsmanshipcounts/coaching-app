@@ -14,51 +14,51 @@ jest.mock('react-router-dom', () => {
     }
 });
 
-jest.mock('./Home', () => {
-    return {
-        __esModule: true,
-        default: 'Mock-Home'
-    }
-});
+function expectLink(signIn: Element | null, to: string, text: string) {
+    expect(signIn).toHaveAttribute('to', to);
+    expect(signIn).toHaveTextContent(text);
+}
 
-jest.mock('./SignIn', () => {
-    return {
-        __esModule: true,
-        default: 'Mock-Sign-In'
-    }
-});
+function expectRoute(route: Element | null, path: string, component: string) {
+    expect(route).toHaveAttribute('path', path);
+    expect(route).toHaveAttribute('component', component);
+}
+
+function expectExactRoute(route: Element | null, path: string, component: string) {
+    expectRoute(route, path, component);
+    expect(route).toHaveAttribute('exact', 'true');
+}
 
 describe('App', () => {
     describe('Header', () => {
         it('exists', () => {
             const {container} = render(<App/>);
-            expect(container.querySelector('.site-header')).toBeInTheDocument();
+            expect(container.querySelector('.app-header')).toBeInTheDocument();
         });
 
         it('has a link to Sign-In', () => {
             const {container} = render(<App/>);
             let signIn = container.querySelector('mock-link');
-            expect(signIn).toHaveAttribute('to', '/sign-in');
-            expect(signIn).toHaveTextContent('Sign-In');
+            expectLink(signIn, '/sign-in', 'Sign-In');
         });
     });
 
     describe('Structure', () => {
         it('is a site', () => {
             const {container} = render(<App/>);
-            let site = container.querySelector('.site');
+            let site = container.querySelector('.App');
             expect(site).toBeInTheDocument();
         });
 
         it('has a header', () => {
             const {container} = render(<App/>);
-            let siteHeader = container.querySelector('.site .site__header');
+            let siteHeader = container.querySelector('.App .App__header');
             expect(siteHeader).toBeInTheDocument();
         });
 
         it('has content', () => {
             const {container} = render(<App/>);
-            let siteContent = container.querySelector('.site .site__content');
+            let siteContent = container.querySelector('.App .App__content');
 
             expect(siteContent).toBeInTheDocument();
         });
@@ -73,10 +73,8 @@ describe('App', () => {
                 <App />
             </Router>);
 
-            let route = container.querySelector('mock-route');
-            expect(route).toHaveAttribute('path', '/');
-            expect(route).toHaveAttribute('exact', 'true');
-            expect(route).toHaveAttribute('component', 'Mock-Home');
+            let route = container.querySelector('mock-route[path="/"]');
+            expectExactRoute(route, '/', 'Mock-Home');
         });
 
         it('Routes to Sign-In', () => {
@@ -88,8 +86,21 @@ describe('App', () => {
             </Router>);
 
             let route = container.querySelector('mock-route[path="/sign-in"]');
-            expect(route).toHaveAttribute('path', '/sign-in');
-            expect(route).toHaveAttribute('component', 'Mock-Sign-In');
+            expectRoute(route, '/sign-in', 'Mock-Sign-In');
         });
     });
+});
+
+jest.mock('./pages/home/Home', () => {
+    return {
+        __esModule: true,
+        default: 'Mock-Home'
+    }
+});
+
+jest.mock('./pages/sign-in/SignIn', () => {
+    return {
+        __esModule: true,
+        default: 'Mock-Sign-In'
+    }
 });
